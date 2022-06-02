@@ -53,7 +53,6 @@ import dev.chrisbanes.snapper.SnapperFlingBehavior
 import dev.chrisbanes.snapper.SnapperFlingBehaviorDefaults
 import dev.chrisbanes.snapper.SnapperLayoutInfo
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -237,7 +236,7 @@ fun HorizontalPager(
     ),
     key: ((page: Int) -> Any)? = null,
     userScrollEnabled: Boolean = true,
-    content: @Composable PagerScope.(page: Int) -> Unit,
+    content: @Composable PagerScope.(page: Int, scrollConnection: NestedScrollConnection) -> Unit,
 ) {
     Pager(
         count = count,
@@ -293,7 +292,7 @@ fun VerticalPager(
     ),
     key: ((page: Int) -> Any)? = null,
     userScrollEnabled: Boolean = true,
-    content: @Composable PagerScope.(page: Int) -> Unit,
+    content: @Composable PagerScope.(page: Int, scrollConnection: NestedScrollConnection) -> Unit,
 ) {
     Pager(
         count = count,
@@ -326,7 +325,7 @@ internal fun Pager(
     userScrollEnabled: Boolean,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
-    content: @Composable PagerScope.(page: Int) -> Unit,
+    content: @Composable PagerScope.(page: Int, scrollConnection: NestedScrollConnection) -> Unit,
 ) {
     require(count >= 0) { "pageCount must be >= 0" }
 
@@ -411,7 +410,7 @@ internal fun Pager(
                         .fillParentMaxHeight()
                         .wrapContentSize()
                 ) {
-                    pagerScope.content(page)
+                    pagerScope.content(page, consumeFlingNestedScrollConnection)
                 }
             }
         }
@@ -440,7 +439,7 @@ internal fun Pager(
                         .fillParentMaxWidth()
                         .wrapContentSize()
                 ) {
-                    pagerScope.content(page)
+                    pagerScope.content(page, consumeFlingNestedScrollConnection)
                 }
             }
         }
